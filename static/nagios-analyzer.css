@@ -1,0 +1,18 @@
+body { padding: 0px; margin: 0px; }
+rect[rx] { cursor: pointer; }
+rect[rx]:hover { stroke:black; stroke-width:1; }
+/*text:hover { stroke:black; stroke-width:1; stroke-opacity:0.35; }*/
+#detailsPopup {
+    padding: 5;
+    opacity: 0.9;
+    border-radius:10px;
+    background-color:#90BEE3;
+    font-size:11;
+    position: fixed;
+    /*border: 1px solid red;*/
+    display: none;
+}
+#detailsText { font-size:13; /*width: 400px; height: 500px;*/ /*border: 1px solid red;*/ overflow: auto }
+#m,#a,#f,#pid,#ts,#dur,#pc { display: inline; }
+ul { padding-left: 20px; }
+
