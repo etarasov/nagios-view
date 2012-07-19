@@ -50,7 +50,14 @@ dateTimeUTC2 = localTimeToUTC pDT dateTime2
 
 pageHandlerGet :: ServerPartT (ErrorT String IO) Response
 pageHandlerGet = do
-    alerts <- lift $ getAlerts dateTimeUTC1 dateTimeUTC2
+    year <- getInputRead "year"
+    month <- getInputRead "month"
+    day <- getInputRead "day"
+
+    let dateTime1 = localTimeToUTC pDT $ LocalTime (fromGregorian year month day) (TimeOfDay 0 0 0)
+    let dateTime2 = localTimeToUTC pDT $ LocalTime (fromGregorian year month $ day + 1) (TimeOfDay 0 0 0)
+
+    alerts <- lift $ getAlerts dateTime1 dateTime2
     let (hostMap, servMap) = arrangeAlertsByAttr alerts
     let diagram' = diagram $ assocs servMap
     let response = toResponse $ renderHtml $ htmlWrapper $ diagram'
@@ -62,10 +69,10 @@ htmlWrapper picture = do
  \<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" :: String)
     H.html H.! HA.xmlns "http://www.w3.org/1999/xhtml" $ do
         H.head $ do
-            H.title "Nagios analyzer"
+            H.title "Nagios view"
             H.meta H.! HA.httpEquiv "Content-Type" H.! HA.content "text/html; charset=utf-8"
-            H.link H.! HA.rel "stylesheet" H.! HA.type_ "text/css" H.! HA.href "static/nagios-analyzer.css"
-            H.script H.! HA.src "static/nagios-analyzer.js" H.! HA.type_ "text/javascript" $ ""
+            H.link H.! HA.rel "stylesheet" H.! HA.type_ "text/css" H.! HA.href "static/nagios-view.css"
+            H.script H.! HA.src "static/nagios-view.js" H.! HA.type_ "text/javascript" $ ""
         H.body $ do
             H.div H.! HA.style "left: 313px; visibility: visible; display: none; top: 521px;" H.! HA.id "detailsPopup" $
                 H.ul $ do
@@ -104,9 +111,11 @@ text_' = Parent "text" "<text" "</text>"
 
 diagram :: [((String, String), [(LocalTime, ServState, String)])] -> S.Svg
 diagram events =
+     let height' = 20 * length events + 30
+     in
      S.svg S.! S.customAttribute "xmlns" "http://www.w3.org/2000/svg"
            S.! version "1.1"
-           S.! height "600"
+           S.! height (fromString $ show height')--"600"
            S.! width "1000"
            S.! onload "init(evt)"
            $ do
@@ -122,7 +131,7 @@ diagram events =
                S.stop S.! offset "95%"
                       S.! stopColor "#eeeeb0"
         S.rect S.! fill "url(#background)"
-               S.! height "600"
+               S.! height (fromString $ show height')
                S.! width "1000"
                S.! y "0"
                S.! x "0"

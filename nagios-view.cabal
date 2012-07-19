@@ -16,7 +16,8 @@ Executable  nagios-view
                     containers == 0.5.*,
                     blaze-svg == 0.3.*,
                     blaze-html == 0.5.*,
-                    blaze-markup == 0.5.*
+                    blaze-markup == 0.5.*,
+                    safe==0.3.*
 
     Main-Is:        Main.hs
     Other-modules:  NagView.Types
