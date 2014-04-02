@@ -13,7 +13,7 @@ import System.Posix.Syslog
 
 main :: IO ()
 main = do
-    let httpConf = Conf 8080 Nothing Nothing 60
+    let httpConf = Conf 8080 Nothing Nothing 60 Nothing
     sock <- socket AF_INET Stream defaultProtocol
     setSocketOption sock ReuseAddr 1
     loopbackIp <- inet_addr "127.0.0.1"
